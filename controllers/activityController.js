@@ -1,5 +1,10 @@
 const activity = require('../models').activity_model;
+const project = require('../models').project_model;
+const employ = require('../models').employ_model; 
+const db = require('../models');
+
 module.exports = {
+    
     list(req, res) {
         return activity
             .findAll({})
@@ -73,5 +78,60 @@ module.exports = {
             .catch((error) => res.status(400).send(error));
     },
 
+    listFull(req, res) {
+        return activity
+            .findAll({
+                attributes: ['id', 'name', 'description'],
+                include: [{
+                    attributes: ['id', 'description', 'state'],
+                    model: project,
 
+                    include: [{
+                        attributes: ['name', 'lastname', 'email'],
+                        model: employ
+                    }]
+
+                },
+                ]
+            })
+            .then((activity) => res.status(200).send(activity))
+            .catch((error) => { res.status(400).send(error); });
+    },
+
+    listEnableFull(req, res) {
+        return activity
+            .findAll({
+                attributes: ['id', 'name'],
+                include: [{
+                    attributes: ['id', 'description'],
+                    model: project,
+
+                    include: [{
+                        attributes: ['name', 'email'],
+                        model: employ
+                    }]
+                },
+                ],
+                order: [
+                    ['name', 'ASC']
+                ]
+            })
+            .then((activity) => res.status(200).send(activity))
+            .catch((error) => { res.status(400).send(error); });
+    },
+    getSQL(req, res) {
+
+        return db.sequelize.query("SELECT * FROM activity")
+            .then((result) => {
+                console.log(result);
+                if (!result) {
+                    return res.status(404).send({
+                        message: 'result Not Found',
+                    });
+                }
+                return res.status(200).send(result[0]);
+            })
+            .catch((error) =>
+                res.status(400).send(error));
+    },
 };
