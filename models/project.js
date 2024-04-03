@@ -56,9 +56,15 @@ module.exports = sequelize => {
   const options = {
     tableName: "project",
     comment: "",
-    indexes: []
+    indexes: [],
+    timestamps: false,
+    underscored: true,
+    freezeTableName: true,
+    schema: 'public'
+
   };
   const ProjectModel = sequelize.define("project_model", attributes, options);
+
   ProjectModel.associate = function (models) {
     ProjectModel.hasMany(models.activity_model, {
       foreignKey: 'id_project'
@@ -67,5 +73,7 @@ module.exports = sequelize => {
       foreignKey: 'id_per_res'
     });
   };
+
+
   return ProjectModel;
 };

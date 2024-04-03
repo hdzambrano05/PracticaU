@@ -13,7 +13,7 @@ module.exports = sequelize => {
       autoIncrement: true
     },
     name: {
-      type: DataTypes.CHAR(15),
+      type: DataTypes.CHAR,
       allowNull: true,
       defaultValue: null,
       comment: null,
@@ -47,8 +47,19 @@ module.exports = sequelize => {
   const options = {
     tableName: "activity",
     comment: "",
-    indexes: []
+    indexes: [],
+    timestamps: false,
+    underscored: true,
+    freezeTableName: true,
+    schema: 'public'
+
   };
   const ActivityModel = sequelize.define("activity_model", attributes, options);
+  ActivityModel.associate = function (models) {
+    ActivityModel.belongsTo(models.project_model, {
+    foreignKey: 'id_project'
+    });
+    };
+   
   return ActivityModel;
 };

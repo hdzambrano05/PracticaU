@@ -56,5 +56,6 @@ module.exports = sequelize => {
       foreignKey: 'id_per_res'
     });
   };
+
   return EmployModel;
 };
